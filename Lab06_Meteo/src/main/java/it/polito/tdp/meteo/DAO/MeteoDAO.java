@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import it.polito.tdp.meteo.model.Rilevamento;
 
@@ -40,9 +42,40 @@ public class MeteoDAO {
 	}
 
 	public List<Rilevamento> getAllRilevamentiLocalitaMese(int mese, String localita) {
+		
+		final String sql= "SELECT * FROM situazione WHERE localita= localita AND MONTH(data) = mese";
 
 		return null;
 	}
 
+	public Map<String,Float> getUmiditaMediaLocalitaMese(int mese){
+		
+		final String sql = "SELECT localita, AVG(umidita) AS umiditaMed FROM situazione WHERE MONTH(data) = ? GROUP BY localita";
+				
+		Map<String, Float> mappa = new  TreeMap<>();
+				
+		try {
+			Connection conn= ConnectDB.getConnection(); 
+			PreparedStatement st= conn.prepareStatement(sql);
+			
+			st.setInt(1,mese);
+			
+			ResultSet rs = st.executeQuery();
+			
+			while(rs.next()) {
+					mappa.put(rs.getString("localita"),rs.getFloat("umiditaMed"));
+				}
+				
+			conn.close();
+			return mappa;
 
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
+	}
+	
+	
 }
+
+
