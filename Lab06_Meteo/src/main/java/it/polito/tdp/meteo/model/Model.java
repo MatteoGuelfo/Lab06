@@ -51,9 +51,9 @@ public class Model {
 		int indice=0;
 		
 		if(mese>=10)
-			calcolaSequenza(mese,0,rit,0.0f, LocalDate.parse("2013-"+mese+"-01"), infoMeteo.getAllLocalita());
+			calcolaSequenzaErrata(mese,0,rit,0.0f, LocalDate.parse("2013-"+mese+"-01"), infoMeteo.getAllLocalita());
 		if(mese<10)
-			calcolaSequenza(mese,0,rit,0.0f, LocalDate.parse("2013-0"+mese+"-01"), infoMeteo.getAllLocalita());
+			calcolaSequenzaErrata(mese,0,rit,0.0f, LocalDate.parse("2013-0"+mese+"-01"), infoMeteo.getAllLocalita());
 		
 		float best =costi.get(0);
 		
@@ -73,7 +73,7 @@ public class Model {
 		return ritorno;
 	}
 	
-	private void calcolaSequenza(int mese, int livello, List<String> sequenza, float costo, LocalDate oggi, List<String> localita) {
+	private void calcolaSequenzaErrata(int mese, int livello, List<String> sequenza, float costo, LocalDate oggi, List<String> localita) {
 		float costoSeq = costo +COST*livello; 
 		LocalDate daData = oggi;
 		
@@ -104,14 +104,52 @@ public class Model {
 			
 			System.out.println(costoSeq);
 			//System.out.println("livello: "+livello);
-			System.out.println(sequenza+" "+ oggi+" "+costoSeq+ " umidita puntuale "+" "+ livello);
-			calcolaSequenza(mese,++livello,sequenza,costoSeq, oggi , nLoc ); 
+			System.out.println(sequenza+" "+ oggi+" "+costoSeq+ " umidita puntuale "+ livello);
+			calcolaSequenzaErrata(mese,++livello,sequenza,costoSeq, oggi , nLoc ); 
 			
 			livello--;
 			oggi= daData; 
 			sequenza.remove(l);
 		}
 	}
+
+	public void calcolaSequenza(List<String> localita, List<String> sequenza, int livello, int rip) {
+		float costoParziale;
+		
+		if(livello==3 && sequenza.size() == 15 ) {
+			System.out.println(sequenza+"\n");
+			return;
+		}
+		
+		for(String l : localita) {
+			for(int j= rip ; j > 2 ; j--) {
+				for(int i= 0 ; i < j ; i++) {
+					sequenza.add(l);				
+				}
+				List<String> list = new LinkedList<>(localita);
+				list.remove(l);	
+
+				calcolaSequenza(list,sequenza, ++livello, rip);	
+				
+				livello--;
+				for(int i= 0 ; i < rip ; i++) {
+					sequenza.remove(l);
+				}
+				
+			}
+			
+			}
+		}
+	
+	public float costoTot(List<String> combo) {
+		float costo= 0.0f; 
+		
+		
+		
+		
+		return costo;
+	}
+	
 	
 
 }
