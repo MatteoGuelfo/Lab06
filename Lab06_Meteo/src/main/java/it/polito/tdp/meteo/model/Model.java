@@ -51,25 +51,25 @@ public class Model {
 		int indice=0;
 		
 		if(mese>=10)
-			calcolaSequenzaErrata(mese,0,rit,0.0f, LocalDate.parse("2013-"+mese+"-01"), infoMeteo.getAllLocalita());
+			calcolaSequenza(mese,0,rit,0.0f, LocalDate.parse("2013-"+mese+"-01"), infoMeteo.getAllLocalita(),0);
 		if(mese<10)
-			calcolaSequenzaErrata(mese,0,rit,0.0f, LocalDate.parse("2013-0"+mese+"-01"), infoMeteo.getAllLocalita());
+			calcolaSequenza(mese,0,rit,0.0f, LocalDate.parse("2013-0"+mese+"-01"), infoMeteo.getAllLocalita(),0);
 		
-		float best =costi.get(0);
-		
-		for(Float f: costi) {
-			if(f<best) {
-				best=f;
-				System.out.println(best);
-				indice= costi.indexOf(f);
-			}
-		}
-		
-		for(String s:sequenze.get(indice)) {
-			ritorno +=" "+s;
-			
-		}
-		//System.out.println(rit);
+//		float best =costi.get(0);
+//		
+//		for(Float f: costi) {
+//			if(f<best) {
+//				best=f;
+//				System.out.println(best);
+//				indice= costi.indexOf(f);
+//			}
+//		}
+//		
+//		for(String s:sequenze.get(indice)) {
+//			ritorno +=" "+s;
+//			
+//		}
+//		//System.out.println(rit);
 		return ritorno;
 	}
 	
@@ -113,25 +113,32 @@ public class Model {
 		}
 	}
 
-	public void calcolaSequenza(List<String> localita, List<String> sequenza, int livello, int rip) {
-		float costoParziale;
+	public void calcolaSequenza(int mese,int livello, List<String> sequenza,float costo, LocalDate oggi, List<String> localita, int rip) {
+		float costoParziale= 0.0f;
 		
 		if(livello==3 && sequenza.size() == 15 ) {
-			System.out.println(sequenza+"\n");
+			System.out.println(sequenza+" "+ costo+"\n");
 			return;
 		}
 		
 		for(String l : localita) {
+			List <Rilevamento> rilList= new LinkedList<>( infoMeteo.getAllRilevamentiLocalitaMese(mese, l));
+			System.out.print(rilList);
 			for(int j= rip ; j > 2 ; j--) {
 				for(int i= 0 ; i < j ; i++) {
-					sequenza.add(l);				
+					sequenza.add(l);	
+					costoParziale+=rilList.get(sequenza.size()).getUmidita();
+					//oggi = oggi.plusDays(1);
+					
 				}
 				List<String> list = new LinkedList<>(localita);
 				list.remove(l);	
-
-				calcolaSequenza(list,sequenza, ++livello, rip);	
+				costo+=costoParziale+100;
+				
+				calcolaSequenza(mese, ++livello, sequenza, costo, oggi, list,  rip);	
 				
 				livello--;
+				costo=costo-costoParziale-100;
 				for(int i= 0 ; i < rip ; i++) {
 					sequenza.remove(l);
 				}

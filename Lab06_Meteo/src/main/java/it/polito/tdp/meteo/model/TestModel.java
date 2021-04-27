@@ -15,9 +15,10 @@ public class TestModel {
 		lista.add("Milano");
 		lista.add("Genova");
 		
+		LocalDate dataDate=  LocalDate.of(2021,03,01);
 		
-		m.calcolaSequenza(lista, new LinkedList<String>(), 0, 6);	
-//		LocalDate dataDate=  LocalDate.of(2021,02,01);
+		m.calcolaSequenza(3,0,new LinkedList<String>(),0.0f,dataDate,lista, 6);	
+//		
 //		
 //		LocalDate newdate = dataDate.plusDays(1);
 //		
