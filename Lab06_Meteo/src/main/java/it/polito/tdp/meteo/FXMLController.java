@@ -38,7 +38,7 @@ public class FXMLController {
 
     @FXML
     void doCalcolaSequenza(ActionEvent event) {
-    	//txtResult.setText("Prova connessione");
+    	txtResult.setText(model.trovaSequenza(boxMese.getValue()));
 
     }
 
